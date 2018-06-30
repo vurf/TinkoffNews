@@ -12,8 +12,6 @@ protocol IServicesAssembly {
     
     var newsService: INewsService {get}
     
-    var saveContext: ISaveContext {get}
-    
     var mainContext: IMainContext {get}
 }
 
@@ -26,8 +24,6 @@ class ServicesAssembly: IServicesAssembly {
     }
     
     lazy var newsService: INewsService = NewsService(requestSender: self.coreAssembly.requestSender, context: self.coreAssembly.saveContext)
-    
-    lazy var saveContext: ISaveContext = self.coreAssembly.saveContext
     
     lazy var mainContext: IMainContext = self.coreAssembly.mainContext
 }

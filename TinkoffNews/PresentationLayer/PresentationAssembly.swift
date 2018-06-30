@@ -35,8 +35,8 @@ class PresentationAssembly: IPresentationAssembly {
             return nil
         }
         
+        articles.presentationAssemly = self
         articles.mainContext = self.serviceAssembly.mainContext
-        articles.saveContext = self.serviceAssembly.saveContext
         articles.newsService = self.serviceAssembly.newsService
         
         navigation.viewControllers = [articles]
@@ -50,7 +50,7 @@ class PresentationAssembly: IPresentationAssembly {
             return nil
         }
         
-//        articleViewController
+        articleViewController.newsService = self.serviceAssembly.newsService
         
         return articleViewController
     }

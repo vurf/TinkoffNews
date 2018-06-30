@@ -28,12 +28,13 @@ class ArticlesParser: IParser {
             for shortArticle in news {
                 guard let id = shortArticle["id"] as? String,
                     let title = shortArticle["title"] as? String,
-                    let slug = shortArticle["slug"] as? String
+                    let slug = shortArticle["slug"] as? String,
+                    let createTime = shortArticle["createdTime"] as? String
                 else {
                         continue
                 }
                 
-                articles.append(ShortArticleModel(id: id, title: title, slug: slug, counter: 0))
+                articles.append(ShortArticleModel(id: id, title: title, slug: slug, counter: 0, createdTime: createTime))
             }
             
             return articles

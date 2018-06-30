@@ -18,8 +18,8 @@ class ArticlesDataProvider : NSObject {
     init(tableView: UITableView, context: IMainContext) {
         self.tableView = tableView
         let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
-        let sortByTimestamp = NSSortDescriptor(key: "id", ascending: false)
-        fetchRequest.sortDescriptors = [sortByTimestamp]
+        let sortByCreatedTime = NSSortDescriptor(key: "createdTime", ascending: false)
+        fetchRequest.sortDescriptors = [sortByCreatedTime]
         self.fetchedResultsController = NSFetchedResultsController<Article>(fetchRequest: fetchRequest, managedObjectContext: context.mainContext, sectionNameKeyPath: nil, cacheName: nil)
         
         super.init()

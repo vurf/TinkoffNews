@@ -24,14 +24,14 @@ class ArticleTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.counterLabel.layer.cornerRadius = self.counterLabel.bounds.height / 2
+        self.counterLabel.layer.masksToBounds = true
     }
     
     func setConfiguration(config: Article) {
         self.titleArticleLabel.text = config.title
-        self.detailArticleLabel.text = config.slug
-        self.counterLabel.text = "1"
-        self.counterLabel.layer.cornerRadius = 12
-        self.counterLabel.layer.masksToBounds = true
+        self.detailArticleLabel.text = config.createdTime
+        self.counterLabel.text = "100"
     }
 }
 
@@ -40,9 +40,15 @@ class ArticlesViewController: UITableViewController {
     var fetchedResultsController: NSFetchedResultsController<Article>?
     var articlesDataProvider : ArticlesDataProvider?
     
-    var saveContext: ISaveContext!
     var mainContext: IMainContext!
     var newsService: INewsService!
+    var presentationAssemly: IPresentationAssembly!
+    
+    lazy var networkAlertController: UIAlertController = {
+        let alertController = UIAlertController(title: "Ошибка", message: "Интернет соединение отсутствует", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        return alertController
+    }()
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -68,19 +74,36 @@ class ArticlesViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.newsService.getNews(from: 0, count: 20) { (result, error) in
-
-            if let news = result {
-                for article in news {
-                    let art = Article.insert(in: self.saveContext.saveContext)
-                    art?.id = article.id
-                    art?.slug = article.slug
-                    art?.title = article.title
+        self.newsService.getNews(from: 0, count: 22) { (result, error) in
+            DispatchQueue.main.async {
+                if error != nil {
+                    self.present(self.networkAlertController, animated: true, completion: nil)
                 }
-                
-                self.saveContext.performSave(context: self.saveContext.saveContext, completionHandler: nil)
             }
         }
+    }
+    
+    @IBAction func refresh(_ sender: UIRefreshControl) {
+        self.newsService.getNews(from: 0, count: 22) { (result, error) in
+            DispatchQueue.main.async {
+                if error != nil {
+                    self.present(self.networkAlertController, animated: true, completion: nil)
+                }
+                
+                sender.endRefreshing()
+            }
+        }
+    }
+    
+    // MARK: - Data Source
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {        
+        guard let articleViewController = self.presentationAssemly.getArticleViewController() else { return }
+        guard let articleObject = self.fetchedResultsController?.object(at: indexPath) else { return }
+        
+//        articleObject.counter++
+        
+        articleViewController.article = ArticleDisplayModel.create(articleObject: articleObject)
+        self.navigationController?.pushViewController(articleViewController, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

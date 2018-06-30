@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		51E430DF20E6C5EA00A771D1 /* EdgeInsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E430DE20E6C5EA00A771D1 /* EdgeInsetLabel.swift */; };
+		51E430E120E772F200A771D1 /* ArticleDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E430E020E772F200A771D1 /* ArticleDisplayModel.swift */; };
+		51E430E420E77DE600A771D1 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E430E320E77DE600A771D1 /* String+Extension.swift */; };
 		B316855020DD013400938D32 /* ServiceAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B316854F20DD013400938D32 /* ServiceAssembly.swift */; };
 		B316855220DD017E00938D32 /* PresentationAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B316855120DD017E00938D32 /* PresentationAssembly.swift */; };
 		B3705E8F20DCDE6E0073CCC2 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3705E8E20DCDE6E0073CCC2 /* CoreDataStack.swift */; };
@@ -49,6 +52,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		51E430DE20E6C5EA00A771D1 /* EdgeInsetLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsetLabel.swift; sourceTree = "<group>"; };
+		51E430E020E772F200A771D1 /* ArticleDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDisplayModel.swift; sourceTree = "<group>"; };
+		51E430E320E77DE600A771D1 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		B316854F20DD013400938D32 /* ServiceAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceAssembly.swift; sourceTree = "<group>"; };
 		B316855120DD017E00938D32 /* PresentationAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationAssembly.swift; sourceTree = "<group>"; };
 		B3705E8E20DCDE6E0073CCC2 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
@@ -102,6 +108,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		51E430E220E77DD500A771D1 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				51E430DE20E6C5EA00A771D1 /* EdgeInsetLabel.swift */,
+				51E430E320E77DE600A771D1 /* String+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		51E430E520E77F6100A771D1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				51E430E020E772F200A771D1 /* ArticleDisplayModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		B3705E8B20DCDDBF0073CCC2 /* ServiceLayer */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,6 +137,8 @@
 		B3705E8C20DCDDCD0073CCC2 /* PresentationLayer */ = {
 			isa = PBXGroup;
 			children = (
+				51E430E520E77F6100A771D1 /* Models */,
+				51E430E220E77DD500A771D1 /* Extensions */,
 				B3705E9620DCE0730073CCC2 /* Article */,
 				B3705E9520DCE0690073CCC2 /* Articles */,
 				B37A301320DC0D4C00A36CF5 /* Main.storyboard */,
@@ -365,8 +390,10 @@
 				B3705E8F20DCDE6E0073CCC2 /* CoreDataStack.swift in Sources */,
 				B37A304C20DC0D8D00A36CF5 /* ArticlesRequest.swift in Sources */,
 				B37A304D20DC0D8D00A36CF5 /* IRequest.swift in Sources */,
+				51E430E120E772F200A771D1 /* ArticleDisplayModel.swift in Sources */,
 				B37A304920DC0D8D00A36CF5 /* IRequestSender.swift in Sources */,
 				B37A304820DC0D8D00A36CF5 /* RequestFactory.swift in Sources */,
+				51E430E420E77DE600A771D1 /* String+Extension.swift in Sources */,
 				B37A304620DC0D8D00A36CF5 /* ArticlesParser.swift in Sources */,
 				B3705E9220DCDEFA0073CCC2 /* CoreAssembly.swift in Sources */,
 				B37A301820DC0D4C00A36CF5 /* TinkoffNews.xcdatamodeld in Sources */,
@@ -374,6 +401,7 @@
 				B37A304520DC0D8D00A36CF5 /* ArticleParser.swift in Sources */,
 				B3C2EB5B20E34CAD00363C5C /* NewsService.swift in Sources */,
 				B3C2EB5D20E35D9A00363C5C /* Article+CoreData.swift in Sources */,
+				51E430DF20E6C5EA00A771D1 /* EdgeInsetLabel.swift in Sources */,
 				B37A304420DC0D8D00A36CF5 /* ShortArticleModel.swift in Sources */,
 				B316855020DD013400938D32 /* ServiceAssembly.swift in Sources */,
 				B37A304320DC0D8D00A36CF5 /* ArticleModel.swift in Sources */,

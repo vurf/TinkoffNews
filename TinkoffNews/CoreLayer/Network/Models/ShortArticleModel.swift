@@ -17,4 +17,6 @@ struct ShortArticleModel {
     let slug: String
     
     let counter: Int
+    
+    let createdTime: String
 }
