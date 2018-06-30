@@ -9,7 +9,7 @@
 import Foundation
 
 class ArticlesParser: IParser {
-    typealias Model = [ShortArticleModel]
+    typealias Model = [ShortArticleCoreModel]
     
     func parse(data: Data) -> ArticlesParser.Model? {
         do {
@@ -23,7 +23,7 @@ class ArticlesParser: IParser {
                 return nil
             }
             
-            var articles: [ShortArticleModel] = []
+            var articles: [ShortArticleCoreModel] = []
             
             for shortArticle in news {
                 guard let id = shortArticle["id"] as? String,
@@ -34,7 +34,7 @@ class ArticlesParser: IParser {
                         continue
                 }
                 
-                articles.append(ShortArticleModel(id: id, title: title, slug: slug, counter: 0, createdTime: createTime))
+                articles.append(ShortArticleCoreModel(id: id, title: title, slug: slug, counter: 0, createdTime: createTime))
             }
             
             return articles

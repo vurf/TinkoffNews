@@ -9,6 +9,7 @@
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <fetchRequest name="GetArticleById" entity="Article" predicateString="id == $id"/>
+    <fetchRequest name="GetArticleBySlug" entity="Article" predicateString="slug == $slug"/>
     <elements>
         <element name="Article" positionX="-63" positionY="-18" width="128" height="135"/>
     </elements>

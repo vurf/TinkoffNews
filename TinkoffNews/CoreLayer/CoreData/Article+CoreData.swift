@@ -36,6 +36,29 @@ extension Article {
             return nil
         }
         
+        return fetchRequestExecute(in: context, fetchRequest: fetchRequest)
+    }
+    
+    static func getBySlug(in context: NSManagedObjectContext, slug: String) -> Article? {
+        
+        let templateName = "GetArticleBySlug"
+        
+        guard let model = context.persistentStoreCoordinator?.managedObjectModel else {
+            print ("Model is not available in context")
+            assert(false)
+            return nil
+        }
+        
+        guard let fetchRequest = model.fetchRequestFromTemplate(withName: templateName, substitutionVariables: ["slug" : slug]) as? NSFetchRequest<Article> else {
+            assert(false,"No template with name \(templateName)")
+            return nil
+        }
+    
+        return fetchRequestExecute(in: context, fetchRequest: fetchRequest)
+    }
+    
+    static func fetchRequestExecute(in context: NSManagedObjectContext, fetchRequest: NSFetchRequest<Article>) -> Article? {
+        
         var article: Article?
         
         do {
@@ -50,5 +73,4 @@ extension Article {
         
         return article
     }
-    
 }

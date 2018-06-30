@@ -16,7 +16,8 @@ class ArticleViewController: UIViewController {
     @IBOutlet weak var contentTextView: UITextView!
     
     var article: ArticleDisplayModel?
-    var newsService: INewsService!
+    var articleModel: IArticleModel?
+    var presentationAssembly: IPresentationAssembly?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,14 +27,23 @@ class ArticleViewController: UIViewController {
         self.contentTextView.text = ""
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         guard let slugUnwrapped = self.article?.slug else { return }
-        self.newsService.getArticle(slug: slugUnwrapped) { (result, error) in
+        self.articleModel?.getArticle(slug: slugUnwrapped, completionHandler: { (articleDisplayModel, error) in
             DispatchQueue.main.async {
-                self.contentTextView.attributedText = result?.text.convertHtml()
+                if let articleUnwrapped = articleDisplayModel {
+                    self.contentTextView.attributedText = articleUnwrapped.text?.convertHtml()
+                } else if (error != nil) {
+                    guard let networkAlertController = self.presentationAssembly?.networkAlertController else {
+                        return
+                    }
+                    
+                    self.present(networkAlertController, animated: true, completion: nil)
+                    self.contentTextView.text = networkAlertController.message
+                }
             }
-        }
+        })
     }
 }

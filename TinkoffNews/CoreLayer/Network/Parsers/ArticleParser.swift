@@ -9,7 +9,7 @@
 import Foundation
 
 class ArticleParser: IParser {
-    typealias Model = ArticleModel
+    typealias Model = ArticleCoreModel
     
     func parse(data: Data) -> ArticleParser.Model? {
         do {
@@ -29,7 +29,7 @@ class ArticleParser: IParser {
                 return nil
             }
             
-            return ArticleModel(id: id, title: title, slug: slug, text: text)
+            return ArticleCoreModel(id: id, title: title, slug: slug, text: text)
             
         } catch  {
             print("error trying to convert data to JSON")

@@ -11,9 +11,11 @@ import CoreData
 
 protocol INewsService {
     
-    func getNews(from: Int, count: Int, completionHandler: @escaping ([ShortArticleModel]?, String?) -> Void)
+    func getNews(from: Int, count: Int, completionHandler: @escaping ([ShortArticleCoreModel]?, String?) -> Void)
     
-    func getArticle(slug: String, completionHandler: @escaping (ArticleModel?, String?) -> Void)
+    func getArticle(slug: String, completionHandler: @escaping (ArticleCoreModel?, String?) -> Void)
+    
+    func incrementCounter(id: String)
 }
 
 class NewsService: INewsService {
@@ -26,7 +28,7 @@ class NewsService: INewsService {
         self.context = context
     }
     
-    func getNews(from: Int, count: Int, completionHandler: @escaping ([ShortArticleModel]?, String?) -> Void) {
+    func getNews(from: Int, count: Int, completionHandler: @escaping ([ShortArticleCoreModel]?, String?) -> Void) {
         
         let newsConfig = RequestsFactory.ArticlesRequests.getArticlesConfig(pageOffset: from, pageSize: count)
         
@@ -56,8 +58,8 @@ class NewsService: INewsService {
         }
     }
     
-    func getArticle(slug: String, completionHandler: @escaping (ArticleModel?, String?) -> Void) {
-        
+    func getArticle(slug: String, completionHandler: @escaping (ArticleCoreModel?, String?) -> Void) {
+                
         let articleConfig = RequestsFactory.ArticlesRequests.getArticleConfig(slug: slug)
         
         self.requestSender.send(requestConfig: articleConfig) { (result) in
@@ -75,5 +77,15 @@ class NewsService: INewsService {
                 completionHandler(nil, error)
             }
         }
+    }
+    
+    func incrementCounter(id: String) {
+        
+        guard let savedArticle = Article.getById(in: self.context.saveContext, id: id) else {
+            return
+        }
+        
+        savedArticle.counter = savedArticle.counter + 1
+        self.context.performSave(context: self.context.saveContext, completionHandler: nil)
     }
 }

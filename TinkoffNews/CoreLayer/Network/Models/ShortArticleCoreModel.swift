@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ShortArticleModel {
+struct ShortArticleCoreModel {
     
     let id: String
     
