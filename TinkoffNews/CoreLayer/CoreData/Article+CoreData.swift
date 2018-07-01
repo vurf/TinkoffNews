@@ -59,14 +59,15 @@ extension Article {
     
     static func deleteAll(in context: NSManagedObjectContext) {
         
-        do {
-            let objects = try context.fetch(Article.fetchRequest()) as! [Article]
-            for object in objects {
-                context.delete(object)
+        context.perform {
+            do {
+                let objects = try context.fetch(Article.fetchRequest()) as! [Article]
+                for object in objects {
+                    context.delete(object)
+                }
+            } catch {
+                print("Failed to delete: \(error)")
             }
-            
-        } catch {
-            print("Failed to delete: \(error)")
         }
     }
     
@@ -74,14 +75,16 @@ extension Article {
         
         var article: Article?
         
-        do {
-            let results = try context.fetch(fetchRequest)
-            assert(results.count < 2, "Multiple article found!")
-            if let foundedArticle = results.first{
-                article = foundedArticle
+        context.performAndWait {
+            do {
+                let results = try context.fetch(fetchRequest)
+                assert(results.count < 2, "Multiple article found!")
+                if let foundedArticle = results.first{
+                    article = foundedArticle
+                }
+            } catch {
+                print ("Failed to fetch article: \(error)")
             }
-        } catch {
-            print ("Failed to fetch article: \(error)")
         }
         
         return article

@@ -29,7 +29,7 @@ class ArticlesViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.refreshControl?.tintColor = UIColor.white
         self.title = "Новости"
         
         if let mainContextUnwrapped = self.mainContext {
@@ -43,9 +43,11 @@ class ArticlesViewController: UITableViewController {
         self.firstFetchNews()
     }
     
-    @IBAction func refresh(_ sender: UIRefreshControl) {
+    @IBAction func refresh(_ sender: UIRefreshControl) {        
+        // Условие: Жест pull-to-refresh приводит к обновлению списка новостей.
+        // Непонятно, нужно ли удалять при этом кеш?! Если нужно, достаточно раскоментировать строку ниже, иначе оставить как есть.
+        //self.articlesModel?.removeAllNews()
         self.currentOffset = 0
-        self.articlesModel?.removeAllNews()
         self.fetchNews(from: self.currentOffset) {
             sender.endRefreshing()
         }

@@ -23,7 +23,9 @@ class ArticleViewController: UIViewController {
         super.viewDidLoad()
         self.title = article?.title
         self.headerLabel.text = article?.title
-        self.createdTimeLabel.text = article?.createdTime
+        if let createdUnwrapped = article?.createdTime {
+            self.createdTimeLabel.text = "Опубликовано: " + createdUnwrapped.getReadableDateString()
+        }
         self.contentTextView.text = ""
     }
     
