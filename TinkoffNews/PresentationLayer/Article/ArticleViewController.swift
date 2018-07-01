@@ -42,7 +42,10 @@ class ArticleViewController: UIViewController {
                         return
                     }
                     
-                    self?.present(networkAlertController, animated: true, completion: nil)
+                    if self?.presentedViewController == nil {
+                        self?.present(networkAlertController, animated: true, completion: nil)
+                    }
+                    
                     self?.contentTextView.text = networkAlertController.message
                 }
             }

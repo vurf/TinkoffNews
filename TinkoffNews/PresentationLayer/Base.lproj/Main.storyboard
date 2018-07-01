@@ -11,7 +11,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Root View Controller-->
+        <!--Новости-->
         <scene sceneID="qK8-Vr-AnH">
             <objects>
                 <tableViewController storyboardIdentifier="ArticlesViewController" id="err-nA-VKj" customClass="ArticlesViewController" customModule="TinkoffNews" customModuleProvider="target" sceneMemberID="viewController">
@@ -87,7 +87,7 @@
                             <outlet property="delegate" destination="err-nA-VKj" id="cAT-wQ-jCY"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="2U6-rB-PIT"/>
+                    <navigationItem key="navigationItem" title="Новости" id="2U6-rB-PIT"/>
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="d8S-hd-1xp">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>

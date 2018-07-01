@@ -13,7 +13,6 @@ import UIKit
 class ArticlesViewController: UITableViewController {
     
     let batchSize: Int = 20
-    var currentOffset: Int = 0
     private var isDataLoading: Bool = false
     
     var fetchedResultsController: NSFetchedResultsController<Article>?
@@ -30,7 +29,7 @@ class ArticlesViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.refreshControl?.tintColor = UIColor.white
-        self.title = "Новости"
+        self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         
         if let mainContextUnwrapped = self.mainContext {
             self.articlesDataProvider = ArticlesDataProvider(tableView: self.tableView, context: mainContextUnwrapped)
@@ -43,12 +42,11 @@ class ArticlesViewController: UITableViewController {
         self.firstFetchNews()
     }
     
-    @IBAction func refresh(_ sender: UIRefreshControl) {        
+    @IBAction func refresh(_ sender: UIRefreshControl) {
         // Условие: Жест pull-to-refresh приводит к обновлению списка новостей.
         // Непонятно, нужно ли удалять при этом кеш?! Если нужно, достаточно раскоментировать строку ниже, иначе оставить как есть.
         //self.articlesModel?.removeAllNews()
-        self.currentOffset = 0
-        self.fetchNews(from: self.currentOffset) {
+        self.fetchNews(from: 0, count: self.batchSize) {
             sender.endRefreshing()
         }
     }
@@ -56,9 +54,6 @@ class ArticlesViewController: UITableViewController {
     private func performFetch() {
         do {
             try self.fetchedResultsController?.performFetch()
-            if let count = self.fetchedResultsController?.fetchedObjects?.count {
-                self.currentOffset = count
-            }
         } catch {
             // Ignore
         }
@@ -66,23 +61,24 @@ class ArticlesViewController: UITableViewController {
     
     private func firstFetchNews() {
         guard let countFetchedObjects = self.fetchedResultsController?.fetchedObjects?.count, countFetchedObjects > 0 else {
-            self.fetchNews(from: self.currentOffset, completionHandler: nil)
+            self.fetchNews(from: 0, count: self.batchSize, completionHandler: nil)
             return
         }
+        
+        self.fetchNews(from: 0, count: countFetchedObjects, completionHandler: nil)
     }
     
-    private func fetchNews(from: Int, completionHandler: (() -> ())?) {
+    private func fetchNews(from: Int, count: Int, completionHandler: (() -> ())?) {
         self.isDataLoading = true
-        self.articlesModel?.fetchNews(from: from, count: self.batchSize, completionHandler: { [weak self] (result, error) in
+        self.articlesModel?.fetchNews(from: from, count: count, completionHandler: { [weak self] (result, error) in
             DispatchQueue.main.async {
-                if let countLoadedData = result?.count {
-                    self?.currentOffset += countLoadedData
-                } else if error != nil, let networkAlertController = self?.presentationAssemly?.networkAlertController {
-                    self?.present(networkAlertController, animated: true, completion: nil)
+                if error != nil, let networkAlertController = self?.presentationAssemly?.networkAlertController {
+                    if self?.presentedViewController == nil {
+                        self?.present(networkAlertController, animated: true, completion: nil)
+                    }
                 }
                 
                 self?.isDataLoading = false
-                
                 completionHandler?()
             }
         })
@@ -128,9 +124,9 @@ extension ArticlesViewController {
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let lastItemPosition = self.tableView(tableView, numberOfRowsInSection: indexPath.section) - 1
-        if indexPath.row == lastItemPosition, !self.isDataLoading {
-            self.fetchNews(from: self.currentOffset, completionHandler: nil)
+        let lastItemPosition = self.tableView(tableView, numberOfRowsInSection: indexPath.section)
+        if indexPath.row == lastItemPosition - 1, !self.isDataLoading {
+            self.fetchNews(from: lastItemPosition, count: self.batchSize, completionHandler: nil)
         }
     }
 }
