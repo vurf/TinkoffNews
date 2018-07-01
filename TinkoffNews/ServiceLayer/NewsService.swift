@@ -14,8 +14,6 @@ protocol INewsService {
     func getNews(from: Int, count: Int, completionHandler: @escaping ([ShortArticleCoreModel]?, String?) -> Void)
     
     func getArticle(slug: String, completionHandler: @escaping (ArticleCoreModel?, String?) -> Void)
-    
-    func incrementCounter(id: String)
 }
 
 class NewsService: INewsService {
@@ -32,7 +30,7 @@ class NewsService: INewsService {
         
         let newsConfig = RequestsFactory.ArticlesRequests.getArticlesConfig(pageOffset: from, pageSize: count)
         
-        self.requestSender.send(requestConfig: newsConfig) { (result) in
+        self.requestSender.send(requestConfig: newsConfig) { [unowned self] (result) in
             switch result {
             case .success(let articles):
                 
@@ -62,7 +60,7 @@ class NewsService: INewsService {
                 
         let articleConfig = RequestsFactory.ArticlesRequests.getArticleConfig(slug: slug)
         
-        self.requestSender.send(requestConfig: articleConfig) { (result) in
+        self.requestSender.send(requestConfig: articleConfig) { [unowned self] (result) in
             switch result {
             case .success(let article):
                 
@@ -77,15 +75,5 @@ class NewsService: INewsService {
                 completionHandler(nil, error)
             }
         }
-    }
-    
-    func incrementCounter(id: String) {
-        
-        guard let savedArticle = Article.getById(in: self.context.saveContext, id: id) else {
-            return
-        }
-        
-        savedArticle.counter = savedArticle.counter + 1
-        self.context.performSave(context: self.context.saveContext, completionHandler: nil)
     }
 }

@@ -10,32 +10,11 @@ import Foundation
 import CoreData
 import UIKit
 
-class ArticleTableViewCell: UITableViewCell {
-    
-    static let key = "ArticleTableViewCell"
-    
-    @IBOutlet weak var titleArticleLabel: UILabel!
-    @IBOutlet weak var detailArticleLabel: UILabel!
-    @IBOutlet weak var counterLabel: UILabel!
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        self.counterLabel.layer.cornerRadius = self.counterLabel.bounds.height / 2
-        self.counterLabel.layer.masksToBounds = true
-    }
-    
-    func setConfiguration(config: Article) {
-        self.titleArticleLabel.text = config.title
-        self.detailArticleLabel.text = config.createdTime
-        self.counterLabel.text = String(config.counter)
-    }
-}
-
 class ArticlesViewController: UITableViewController {
+    
+    let batchSize: Int = 20
+    var currentOffset: Int = 0
+    private var isDataLoading: Bool = false
     
     var fetchedResultsController: NSFetchedResultsController<Article>?
     var articlesDataProvider : ArticlesDataProvider?
@@ -59,49 +38,63 @@ class ArticlesViewController: UITableViewController {
         } else {
             print("main context missing")
         }
+        
+        self.performFetch()
+        self.firstFetchNews()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    @IBAction func refresh(_ sender: UIRefreshControl) {
+        self.currentOffset = 0
+        self.articlesModel?.removeAllNews()
+        self.fetchNews(from: self.currentOffset) {
+            sender.endRefreshing()
+        }
+    }
+    
+    private func performFetch() {
         do {
             try self.fetchedResultsController?.performFetch()
+            if let count = self.fetchedResultsController?.fetchedObjects?.count {
+                self.currentOffset = count
+            }
         } catch {
             // Ignore
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        self.articlesModel?.fetchNews(from: 0, count: 20, completionHandler: { (result, error) in
-            DispatchQueue.main.async {
-                if error != nil, let networkAlertController = self.presentationAssemly?.networkAlertController {
-                    self.present(networkAlertController, animated: true, completion: nil)
-                }
-            }
-        })
+    private func firstFetchNews() {
+        guard let countFetchedObjects = self.fetchedResultsController?.fetchedObjects?.count, countFetchedObjects > 0 else {
+            self.fetchNews(from: self.currentOffset, completionHandler: nil)
+            return
+        }
     }
     
-    @IBAction func refresh(_ sender: UIRefreshControl) {
-        
-        self.articlesModel?.fetchNews(from: 0, count: 20, completionHandler: { (result, error) in
+    private func fetchNews(from: Int, completionHandler: (() -> ())?) {
+        self.isDataLoading = true
+        self.articlesModel?.fetchNews(from: from, count: self.batchSize, completionHandler: { [weak self] (result, error) in
             DispatchQueue.main.async {
-                if error != nil, let networkAlertController = self.presentationAssemly?.networkAlertController {
-                    self.present(networkAlertController, animated: true, completion: nil)
+                if let countLoadedData = result?.count {
+                    self?.currentOffset += countLoadedData
+                } else if error != nil, let networkAlertController = self?.presentationAssemly?.networkAlertController {
+                    self?.present(networkAlertController, animated: true, completion: nil)
                 }
                 
-                sender.endRefreshing()
+                self?.isDataLoading = false
+                
+                completionHandler?()
             }
         })
     }
+}
+
+// MARK: - Data Source
+extension ArticlesViewController {
     
-    // MARK: - Data Source
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {        
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let articleViewController = self.presentationAssemly?.getArticleViewController() else { return }
         guard let articleObject = self.fetchedResultsController?.object(at: indexPath) else { return }
         
         self.articlesModel?.incrementCounter(article: articleObject)
-        
         articleViewController.article = ArticleDisplayModel.create(articleObject: articleObject)
         self.navigationController?.pushViewController(articleViewController, animated: true)
     }
@@ -114,7 +107,7 @@ class ArticlesViewController: UITableViewController {
         return 0
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {        
+    override func numberOfSections(in tableView: UITableView) -> Int {
         if let sectionsCount = self.fetchedResultsController?.sections?.count {
             return sectionsCount
         }
@@ -130,5 +123,12 @@ class ArticlesViewController: UITableViewController {
         }
         
         return dequeuedCell
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let lastItemPosition = self.tableView(tableView, numberOfRowsInSection: indexPath.section) - 1
+        if indexPath.row == lastItemPosition, !self.isDataLoading {
+            self.fetchNews(from: self.currentOffset, completionHandler: nil)
+        }
     }
 }

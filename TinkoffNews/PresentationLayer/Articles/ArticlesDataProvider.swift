@@ -20,6 +20,7 @@ class ArticlesDataProvider : NSObject {
         let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
         let sortByCreatedTime = NSSortDescriptor(key: "createdTime", ascending: false)
         fetchRequest.sortDescriptors = [sortByCreatedTime]
+        fetchRequest.fetchBatchSize = 20
         self.fetchedResultsController = NSFetchedResultsController<Article>(fetchRequest: fetchRequest, managedObjectContext: context.mainContext, sectionNameKeyPath: nil, cacheName: nil)
         
         super.init()

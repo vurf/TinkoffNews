@@ -12,22 +12,31 @@ protocol IArticlesModel {
     
     func incrementCounter(article: Article)
     
+    func removeAllNews()
+    
     func fetchNews(from: Int, count: Int, completionHandler: @escaping ([ArticleDisplayModel]?, String?) -> Void)
 }
 
 class ArticlesModel: IArticlesModel {
     
     private let newsService: INewsService
+    private let coreDataService: ICoreDataService
     
-    init(newsService: INewsService) {
+    init(newsService: INewsService, coreDataService: ICoreDataService) {
         self.newsService = newsService
+        self.coreDataService = coreDataService
     }
     
     func incrementCounter(article: Article) {
         
         guard let idUnwrapped = article.id else { return }
         
-        self.newsService.incrementCounter(id: idUnwrapped)
+        self.coreDataService.incrementCounter(id: idUnwrapped)
+    }
+    
+    func removeAllNews() {
+        
+        self.coreDataService.removeAllArticles()
     }
     
     func fetchNews(from: Int, count: Int, completionHandler: @escaping ([ArticleDisplayModel]?, String?) -> Void) {

@@ -32,7 +32,7 @@ class PresentationAssembly: IPresentationAssembly {
     
     lazy var articleModel: IArticleModel = ArticleModel(newsService: self.serviceAssembly.newsService, mainContext: self.serviceAssembly.mainContext)
     
-    lazy var articlesModel: IArticlesModel = ArticlesModel(newsService: self.serviceAssembly.newsService)
+    lazy var articlesModel: IArticlesModel = ArticlesModel(newsService: self.serviceAssembly.newsService, coreDataService: self.serviceAssembly.coreDataService)
     
     lazy var networkAlertController: UIAlertController = {
         let alertController = UIAlertController(title: "Ошибка", message: "Интернет соединение отсутствует", preferredStyle: .alert)

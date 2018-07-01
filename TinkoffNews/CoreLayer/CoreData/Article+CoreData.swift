@@ -57,6 +57,19 @@ extension Article {
         return fetchRequestExecute(in: context, fetchRequest: fetchRequest)
     }
     
+    static func deleteAll(in context: NSManagedObjectContext) {
+        
+        do {
+            let objects = try context.fetch(Article.fetchRequest()) as! [Article]
+            for object in objects {
+                context.delete(object)
+            }
+            
+        } catch {
+            print("Failed to delete: \(error)")
+        }
+    }
+    
     static func fetchRequestExecute(in context: NSManagedObjectContext, fetchRequest: NSFetchRequest<Article>) -> Article? {
         
         var article: Article?

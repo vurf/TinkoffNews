@@ -31,17 +31,17 @@ class ArticleViewController: UIViewController {
         super.viewWillAppear(animated)
         
         guard let slugUnwrapped = self.article?.slug else { return }
-        self.articleModel?.getArticle(slug: slugUnwrapped, completionHandler: { (articleDisplayModel, error) in
+        self.articleModel?.getArticle(slug: slugUnwrapped, completionHandler: { [weak self] (articleDisplayModel, error) in
             DispatchQueue.main.async {
                 if let articleUnwrapped = articleDisplayModel {
-                    self.contentTextView.attributedText = articleUnwrapped.text?.convertHtml()
+                    self?.contentTextView.attributedText = articleUnwrapped.text?.convertHtml()
                 } else if (error != nil) {
-                    guard let networkAlertController = self.presentationAssembly?.networkAlertController else {
+                    guard let networkAlertController = self?.presentationAssembly?.networkAlertController else {
                         return
                     }
                     
-                    self.present(networkAlertController, animated: true, completion: nil)
-                    self.contentTextView.text = networkAlertController.message
+                    self?.present(networkAlertController, animated: true, completion: nil)
+                    self?.contentTextView.text = networkAlertController.message
                 }
             }
         })

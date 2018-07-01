@@ -21,15 +21,5 @@ struct RequestsFactory {
             let request = ArticlesRequest(pageOffset: pageOffset, pageSize: pageSize)
             return RequestConfig<ArticlesParser>(request: request, parser: ArticlesParser())
         }
-        
-//        static func photoYellowFlowersConfig() -> RequestConfig<PhotoParser> {
-//            let request = PhotoRequest(apiKey: "8868552-d296293bdcb4bdca2ba7fa783")
-//            return RequestConfig<PhotoParser>(request:request, parser: PhotoParser())
-//        }
-//
-//        static func generateImageConfig(urlString: String) -> RequestConfig<ImageParser> {
-//            let request = ImageRequest(urlString: urlString)
-//            return RequestConfig<ImageParser>(request: request, parser: ImageParser())
-//        }
     }
 }
